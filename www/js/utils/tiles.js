@@ -1,0 +1,7 @@
+const TILES = {
+    CHECKPOINT: 8,
+    CHECKPOINTUNSAVED: 9,
+    WATERBEAKER: 10,
+    DOORUP: 11,
+    DOORDOWN: 12
+};

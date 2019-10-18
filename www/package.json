@@ -1,0 +1,14 @@
+{
+  "name": "adventure",
+  "version": "0.0.1",
+  "description": "An adventure platforming game",
+  "main": "index.html",
+  "scripts": {
+    "test": "start index.html"
+  },
+  "author": "prolightHub <evan.sweet@outlook.com>",
+  "license": "ISC",
+  "dependencies": {
+    "phaser": "^3.19.0"
+  }
+}
