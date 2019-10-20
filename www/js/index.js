@@ -17,7 +17,7 @@ document.addEventListener('deviceready', function()
             default: "arcade",
             arcade: {
                 gravity: { 
-                    y: 800 
+                    y: 640 
                 }
             }
         },

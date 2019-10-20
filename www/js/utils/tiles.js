@@ -1,4 +1,6 @@
 const TILES = {
+    LAVA: 3,
+    TRAMPOLINE: 7,
     CHECKPOINT: 8,
     CHECKPOINTUNSAVED: 9,
     WATERBEAKER: 10,
