@@ -131,10 +131,27 @@ export default class Player extends GameObject {
         }
     }
 
+    heal (amt)
+    {
+        this.hp += amt;
+        this.hp = Math.min(this.hp, this.maxHp);
+
+        this.updateHearts();
+    }
+
     onCollide (object, name)
     {
         switch(name)
         {
+            case "waterBeaker":
+                this.takeDamage(1);
+                break;
+
+            case "heart":
+                this.heal(4);
+                
+                break
+
             case "lava":
                 this.takeDamage(1);
                 break;
@@ -144,7 +161,7 @@ export default class Player extends GameObject {
                 {
                     this.enteredDoor = true;
                     this.touchedObject = object;
-
+                    
                     this.sprite.body.stop();
                 }
                 break;

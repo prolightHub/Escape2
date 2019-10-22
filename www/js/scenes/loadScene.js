@@ -1,3 +1,5 @@
+import game from "../game.js";
+
 export default class LoadScene extends Phaser.Scene {
 
     constructor ()
@@ -11,7 +13,10 @@ export default class LoadScene extends Phaser.Scene {
     }
 
     create ()
-    {
+    {   
+
+        game.init();
+
         this.scene.launch('fxScene');
 
         this.scene.start('mainScene');

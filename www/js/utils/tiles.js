@@ -5,5 +5,6 @@ const TILES = {
     CHECKPOINTUNSAVED: 9,
     WATERBEAKER: 10,
     DOORUP: 11,
-    DOORDOWN: 12
+    DOORDOWN: 12,
+    HEART: 13
 };

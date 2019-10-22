@@ -53,6 +53,8 @@ export default class MainScene extends Phaser.Scene {
         }, this);
 
         this.scene.get('fxScene').fadeIn(); 
+    
+        this.scene.get('fxScene').hideHearts();        
     }
 
     update ()

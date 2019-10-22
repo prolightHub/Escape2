@@ -36,6 +36,14 @@ export default class FxScene extends Phaser.Scene {
         }
     }
 
+    hideHearts ()
+    {
+        if(this.hearts && this.hearts.children !== undefined)
+        {
+            this.hearts.getChildren().forEach(heart => heart.setVisible(false));
+        }
+    }
+
     updateHearts (hp)
     {
         if(this.hearts)
