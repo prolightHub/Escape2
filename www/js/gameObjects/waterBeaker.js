@@ -17,6 +17,11 @@ export default class WaterBeaker extends GameObject {
 
     update ()
     {
+        if(this.dead)
+        {
+            return;
+        }
+
         const sprite = this.sprite;
 
         sprite.setVelocityX(this.xSpeed);
@@ -29,5 +34,11 @@ export default class WaterBeaker extends GameObject {
         {
             this.xSpeed = -Math.abs(this.xSpeed);
         }
+    }
+
+    kill ()
+    {
+        this.sprite.destroy();
+        this.dead = true;
     }
 }
