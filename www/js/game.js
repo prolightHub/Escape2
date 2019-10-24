@@ -160,7 +160,7 @@ var Game = (function()
             // Doing this fix for now.
             window.setTimeout(() =>
             {
-                scene.scene.start("mainScene");
+                scene.scene.start("gameOverScene");
             }, 500);
         }
     }

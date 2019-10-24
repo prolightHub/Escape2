@@ -45,6 +45,16 @@ export default class PlayScene extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, levelHandler.level.widthInPixels, levelHandler.level.heightInPixels);
         this.physics.world.setBounds(0, 0, levelHandler.level.widthInPixels, levelHandler.level.heightInPixels, true, true, true, false);
 
+        this.input.keyboard.on("keydown-P", function(event)
+        {
+            this.scene.pause("playScene");
+
+            this.scene.get("fxScene").fadeOut(undefined, () =>
+            {
+                this.scene.launch("pauseScene");
+            });
+        }, this);
+
         gameObjects.player.updateHearts();
         this.scene.get('fxScene').fadeIn(); 
 
