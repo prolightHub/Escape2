@@ -2,6 +2,9 @@ import LoadScene from "./scenes/loadScene.js";
 import MainScene from "./scenes/mainScene.js";
 import PlayScene from "./scenes/playScene.js";
 import FxScene from "./scenes/fxScene.js";
+import GameOverScene from "./scenes/gameOverScene.js";
+import PauseScene from "./scenes/pauseScene.js";
+import StartScene from "./scenes/startScene.js";
 
 document.addEventListener('deviceready', function() 
 {
@@ -10,7 +13,7 @@ document.addEventListener('deviceready', function()
         parent: 'game',
         width: 800,
         height: 480,
-        scene: [LoadScene, MainScene, PlayScene, FxScene],
+        scene: [LoadScene, StartScene, MainScene, PlayScene, GameOverScene, PauseScene, FxScene],
         backgroundColor: '#36B0C1',
         pixelArt: true,
         physics: {

@@ -1,16 +1,13 @@
-
-var buttons = createButtons();
-
-export default class MainScene extends Phaser.Scene {
+export default class StartScene extends Phaser.Scene {
 
     constructor ()
     {
-        super('mainScene');
+        super('startScene');
     }
 
     preload ()
     {
-        
+
     }
 
     create ()
@@ -29,52 +26,45 @@ export default class MainScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 0.5);
 
-      
-        buttons.play = new Button(this, 400, 240, 120, 40, new Phaser.Display.Color(0, 140, 40), "Play", 
+        this.add.text(400, 300, 'Press any key to start',
         {
-            fontSize: '20px',
             fill: '#FFFFFF',
             align: 'center',
-            fontFamily: '"Press Start 2P"'
-        }, 
-        function()
+            fontSize: '17px',
+        })
+        .setOrigin(0.5, 0.5);
+
+        this.input.keyboard.on("keydown", function(event)
         {
             if(this.cutScening)
             {
                 return;
             }
-            
+
+            this.cutScening = true;
+
             this.scene.get("fxScene").fadeOut(undefined, () =>
             {
-                this.scene.start("playScene");
+                this.scene.start("mainScene");
 
                 this.cutScening = false;
             });
-            
-            this.cutScening = true;
-        }, {
-            offsetX: 0.7
-        });
-        
-        this.input.on('pointerdown', function (pointer) 
-        {
-            buttons.onpointerdown.apply(this, arguments); 
-        }, 
-        this);
 
-        this.scene.get('fxScene').hideHearts(); 
-        
-        this.scene.get('fxScene').fadeIn(); 
-        
+        }, this);
+
+        this.scene.get("fxScene").fadeIn();   
     }
 
     update ()
     {
-        buttons.draw(this.graphics);
+        
     }
 
     render ()
     {
-
+        
     }
+
 }
+
+
