@@ -143,13 +143,16 @@ export default class Player extends GameObject {
     {
         switch(name)
         {
+            case "fireBeaker":
+                this.takeDamage(1);
+                break;
+
             case "waterBeaker":
                 this.takeDamage(1);
                 break;
 
             case "heart":
                 this.heal(4);
-                
                 break
 
             case "lava":

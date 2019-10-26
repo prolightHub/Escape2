@@ -6,5 +6,6 @@ const TILES = {
     WATERBEAKER: 10,
     DOORUP: 11,
     DOORDOWN: 12,
-    HEART: 13
+    HEART: 13,
+    FIREBEAKER: 14
 };

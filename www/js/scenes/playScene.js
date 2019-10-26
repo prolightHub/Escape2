@@ -1,5 +1,6 @@
 import Player from "../gameObjects/player.js";
 import WaterBeaker from "../gameObjects/waterBeaker.js";
+import FireBeaker from "../gameObjects/fireBeaker.js";
 import game from "../game.js";
 
 export default class PlayScene extends Phaser.Scene {
@@ -22,8 +23,10 @@ export default class PlayScene extends Phaser.Scene {
         });
 
         this.load.image("player", "assets/images/player.png");
+        this.load.image("raycast", "assets/images/raycast.png");
         this.load.image("trampoline", "assets/images/trampoline.png");
         this.load.image("waterBeaker", "assets/images/waterBeaker.png");
+        this.load.image("fireBeaker", "assets/images/fireBeaker.png");
     }
 
     create ()
@@ -40,6 +43,8 @@ export default class PlayScene extends Phaser.Scene {
         {
             game.loadTemp(game.cache);
         }
+
+        this.graphics = this.add.graphics({});
 
         this.cameras.main.setZoom(3, 3);
         this.cameras.main.setBounds(0, 0, levelHandler.level.widthInPixels, levelHandler.level.heightInPixels);
@@ -61,8 +66,10 @@ export default class PlayScene extends Phaser.Scene {
         this.isGameBusy = false;
     }
 
-    update ()
+    update (time, delta)
     {
+        this.graphics.clear();
+
         if(this.isGameBusy)
         {
             return;
@@ -70,7 +77,9 @@ export default class PlayScene extends Phaser.Scene {
 
         gameObjects.player.update();
         
-        gameObjects.waterBeakers.getChildren().forEach(waterBeaker => waterBeaker.container.update());
+        gameObjects.waterBeakers.getChildren().forEach(waterBeaker => waterBeaker.container.update(time, delta));
+        gameObjects.fireBeakers.getChildren().forEach(fireBeaker => fireBeaker.container.update(time, delta));
+        gameObjects.raycasts.update(time, delta);
 
         if(gameObjects.player.enteredDoor)
         {
@@ -136,10 +145,47 @@ export default class PlayScene extends Phaser.Scene {
         }
 
         gameObjects.waterBeakers = this.physics.add.group({});
+        gameObjects.fireBeakers = this.physics.add.group({});
         gameObjects.trampolines = this.physics.add.staticGroup({});
         gameObjects.hearts = this.physics.add.staticGroup({});
+        gameObjects.raycasts = this.physics.add.group({});
 
-        // Still don't know what this will be used for in the future.
+        var scene = this;
+        gameObjects.raycasts.addRaycast = function(x, y, callback)
+        {
+            var raycast = gameObjects.raycasts.create(x, y, "raycast");
+            
+            raycast.setVisible(false);
+
+            raycast.firstX = raycast.x;
+            raycast.firstY = raycast.y;
+
+            raycast.counter = 0;
+            raycast._update = function()
+            {
+                this.counter++;
+
+                if(raycast.y > raycast.firstY)
+                {
+                    raycast._callback(this);
+                    raycast.destroy();
+                    return;
+                }
+
+                // scene.graphics.fillStyle(0xFFFFFF);
+                // scene.graphics.fillRect(this.x, this.y, 1, 1);
+            };
+
+            raycast._callback = callback || function() {};
+
+            return raycast;
+        };
+        gameObjects.raycasts.update = function(time, delta)
+        {
+            this.getChildren().forEach(raycast => raycast._update(time, delta));
+        };
+
+        // I still don't know what this will be used for in the future.
         gameObjects.addGroup = function()
         {
             
@@ -157,6 +203,7 @@ export default class PlayScene extends Phaser.Scene {
 
         var heartId = 0;
         var waterBeakerId = 0;
+        var fireBeakerId = 0;
 
         levelHandler.itemsLayer.forEachTile((tile) =>
         {
@@ -166,6 +213,14 @@ export default class PlayScene extends Phaser.Scene {
                     var waterBeaker = new WaterBeaker(this, tile.getCenterX(), tile.getCenterY(), gameObjects.waterBeakers);
  
                     waterBeaker.sprite.id = waterBeakerId++;
+
+                    levelHandler.itemsLayer.removeTileAt(tile.x, tile.y);
+                    break;
+
+                case TILES.FIREBEAKER:
+                    var fireBeaker = new FireBeaker(this, tile.getCenterX(), tile.getCenterY(), gameObjects.fireBeakers);
+    
+                    fireBeaker.sprite.id = fireBeakerId++;
 
                     levelHandler.itemsLayer.removeTileAt(tile.x, tile.y);
                     break;
@@ -208,6 +263,14 @@ export default class PlayScene extends Phaser.Scene {
 
     createCollision ()
     {
+        this.physics.add.collider(gameObjects.raycasts, levelHandler.worldLayer, function(raycast, tile)
+        {
+            raycast._callback(raycast, tile);
+            raycast.destroy();
+        });
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+
         levelHandler.itemsLayer.setTileIndexCallback(TILES.CHECKPOINTUNSAVED, function(objectA, objectB)
         {
             if(objectA.name === "player" && gameObjects.player.sprite.body.blocked.down)
@@ -238,7 +301,7 @@ export default class PlayScene extends Phaser.Scene {
         {
             if(playerSprite.body.touching.down && waterBeakerSprite.body.touching.up)
             {
-                playerSprite.body.inAir = false;  
+                playerSprite.body.inAir = false;
 
                 // This is as close as we can get
                 if(waterBeakerSprite.body.blocked.down || waterBeakerSprite.body.touching.down)
@@ -252,6 +315,27 @@ export default class PlayScene extends Phaser.Scene {
                 waterBeakerSprite.container.kill();
             }else{
                 gameObjects.player.onCollide.apply(gameObjects.player, [waterBeakerSprite, "waterBeaker"]);
+            }
+        });
+
+        this.physics.add.collider(gameObjects.player.sprite, gameObjects.fireBeakers, function(playerSprite, waterFireSprite)
+        {
+            if(playerSprite.body.touching.down && waterFireSprite.body.touching.up)
+            {
+                playerSprite.body.inAir = false;  
+
+                // This is as close as we can get
+                if(waterFireSprite.body.blocked.down || waterFireSprite.body.touching.down)
+                {
+                    // waterFireSprite.body.position.y -= 1;
+                    waterFireSprite.body.position.y = playerSprite.body.position.y + playerSprite.body.height;
+
+                    waterFireSprite.body.stop();
+                }
+
+                waterFireSprite.container.kill();
+            }else{
+                gameObjects.player.onCollide.apply(gameObjects.player, [waterFireSprite, "fireBeaker"]);
             }
         });
 

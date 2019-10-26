@@ -29,7 +29,6 @@ export default class MainScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 0.5);
 
-      
         buttons.play = new Button(this, 400, 240, 120, 40, new Phaser.Display.Color(0, 140, 40), "Play", 
         {
             fontSize: '20px',
@@ -65,7 +64,6 @@ export default class MainScene extends Phaser.Scene {
         this.scene.get('fxScene').hideHearts(); 
         
         this.scene.get('fxScene').fadeIn(); 
-        
     }
 
     update ()
